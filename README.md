@@ -23,3 +23,10 @@ The trade-off: `unescapeRtf` is lenient. If a `\uN` escape is missing its fallba
 ## The awkward edge
 
 Supplementary characters (those outside the Basic Multilingual Plane, such as emoji) are encoded as two `\uN` escapes representing the UTF-16 surrogate pair. A decoder that treats each escape independently will produce two code units that combine into the correct character, but any code that expects one escape per character will be surprised. The round-trip works, but the intermediate RTF contains two escapes for one visible character.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
